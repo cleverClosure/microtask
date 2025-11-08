@@ -11,6 +11,7 @@ struct TabBarView: View {
     @EnvironmentObject var appState: AppState
     @State private var editingTabId: UUID?
     @State private var editingName: String = ""
+    @State private var showingTabTypePopover = false
 
     var body: some View {
         HStack(spacing: 6) {
@@ -36,28 +37,17 @@ struct TabBarView: View {
                 )
             }
 
-            // Plus button to add new tabs - newspaper style with menu
-            Menu {
-                Button {
-                    appState.createTab(type: .note)
-                } label: {
-                    Label("Note Tab", systemImage: "doc.text")
-                }
-
-                Button {
-                    appState.createTab(type: .task)
-                } label: {
-                    Label("Task Tab", systemImage: "checklist")
-                }
-            } label: {
+            // Plus button to add new tabs - newspaper style with popover
+            Button(action: {
+                showingTabTypePopover.toggle()
+            }) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 2)
-                        .strokeBorder(Color.black.opacity(0.2), lineWidth: 0.5)
-                        .background(
+                        .fill(Color.white)
+                        .overlay(
                             RoundedRectangle(cornerRadius: 2)
-                                .fill(Color.white)
+                                .strokeBorder(Color.black.opacity(0.2), lineWidth: 0.5)
                         )
-                        .shadow(color: Color.black.opacity(0.15), radius: 2, x: 0, y: 1)
 
                     Image(systemName: "plus")
                         .font(.system(size: 11, weight: .semibold))
@@ -65,7 +55,43 @@ struct TabBarView: View {
                 }
                 .frame(width: 32, height: 32)
             }
-            .menuStyle(.borderlessButton)
+            .buttonStyle(.plain)
+            .popover(isPresented: $showingTabTypePopover) {
+                VStack(spacing: 0) {
+                    Button(action: {
+                        appState.createTab(type: .note)
+                        showingTabTypePopover = false
+                    }) {
+                        HStack {
+                            Image(systemName: "doc.text")
+                            Text("Note Tab")
+                            Spacer()
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .frame(width: 120)
+                    }
+                    .buttonStyle(.plain)
+
+                    Divider()
+
+                    Button(action: {
+                        appState.createTab(type: .task)
+                        showingTabTypePopover = false
+                    }) {
+                        HStack {
+                            Image(systemName: "checklist")
+                            Text("Task Tab")
+                            Spacer()
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .frame(width: 120)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.vertical, 4)
+            }
             .help("Add new tab")
         }
         .padding(.horizontal, 16)
