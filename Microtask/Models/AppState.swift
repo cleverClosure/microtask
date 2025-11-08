@@ -28,7 +28,8 @@ class AppState: ObservableObject {
         return tabs.first(where: { $0.id == id })
     }
 
-    func createTab(name: String? = nil, type: TabType = .note) {
+    @discardableResult
+    func createTab(name: String? = nil, type: TabType = .note) -> UUID {
         let newTabIndex = tabs.count + 1
         let tabName = name ?? "Tab \(newTabIndex)"
         let colorIndex = tabs.count % TabColors.all.count
@@ -37,6 +38,7 @@ class AppState: ObservableObject {
         tabs.append(newTab)
         activeTabId = newTab.id
         saveData()
+        return newTab.id
     }
 
     func updateTabName(_ tabId: UUID, name: String) {
