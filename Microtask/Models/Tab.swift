@@ -38,13 +38,13 @@ struct TabColorDefinition {
 
 struct TabColors {
     static let all: [TabColorDefinition] = [
-        TabColorDefinition(color: Color(red: 0.35, green: 0.61, blue: 0.93), name: "Blue"),      // Soft Blue
-        TabColorDefinition(color: Color(red: 0.93, green: 0.42, blue: 0.42), name: "Red"),       // Coral Red
-        TabColorDefinition(color: Color(red: 0.42, green: 0.82, blue: 0.58), name: "Green"),     // Mint Green
-        TabColorDefinition(color: Color(red: 0.95, green: 0.68, blue: 0.38), name: "Orange"),    // Warm Orange
-        TabColorDefinition(color: Color(red: 0.71, green: 0.52, blue: 0.93), name: "Purple"),    // Lavender Purple
-        TabColorDefinition(color: Color(red: 0.93, green: 0.76, blue: 0.42), name: "Yellow"),    // Golden Yellow
-        TabColorDefinition(color: Color(red: 0.42, green: 0.76, blue: 0.87), name: "Cyan"),      // Sky Cyan
-        TabColorDefinition(color: Color(red: 0.93, green: 0.51, blue: 0.73), name: "Pink"),      // Rose Pink
+        TabColorDefinition(color: Color(red: 0.20, green: 0.25, blue: 0.35), name: "Ink"),       // Newspaper Ink
+        TabColorDefinition(color: Color(red: 0.55, green: 0.35, blue: 0.30), name: "Sepia"),     // Vintage Sepia
+        TabColorDefinition(color: Color(red: 0.30, green: 0.40, blue: 0.35), name: "Forest"),    // Deep Forest
+        TabColorDefinition(color: Color(red: 0.45, green: 0.35, blue: 0.25), name: "Tobacco"),   // Tobacco Brown
+        TabColorDefinition(color: Color(red: 0.35, green: 0.30, blue: 0.45), name: "Plum"),      // Muted Plum
+        TabColorDefinition(color: Color(red: 0.50, green: 0.45, blue: 0.30), name: "Olive"),     // Olive
+        TabColorDefinition(color: Color(red: 0.30, green: 0.40, blue: 0.45), name: "Slate"),     // Slate Blue
+        TabColorDefinition(color: Color(red: 0.45, green: 0.30, blue: 0.35), name: "Burgundy"),  // Burgundy
     ]
 }

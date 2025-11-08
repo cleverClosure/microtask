@@ -16,6 +16,7 @@ struct TabItemView: View {
     let onNameChange: (String) -> Void
 
     @FocusState private var isFocused: Bool
+    @State private var isHovering = false
 
     var body: some View {
         ZStack {
@@ -29,6 +30,11 @@ struct TabItemView: View {
         }
         .frame(width: 52, height: 32)
         .contentShape(Rectangle())
+        .scaleEffect(isHovering && !isActive ? 1.03 : 1.0)
+        .animation(.easeInOut(duration: 0.15), value: isHovering)
+        .onHover { hovering in
+            isHovering = hovering
+        }
         .onTapGesture(count: 2) {
             if isActive {
                 startEditing()
@@ -43,18 +49,28 @@ struct TabItemView: View {
 
     private var activeTabView: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 6)
-                .fill(Color(nsColor: .controlBackgroundColor))
+            // Elegant newspaper tab with subtle border
+            RoundedRectangle(cornerRadius: 2)
+                .fill(Color.white.opacity(0.8))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(tab.color, lineWidth: 2)
+                    VStack(spacing: 0) {
+                        Spacer()
+                        Rectangle()
+                            .fill(tab.color)
+                            .frame(height: 2)
+                    }
                 )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 2)
+                        .strokeBorder(Color.black.opacity(0.1), lineWidth: 0.5)
+                )
+                .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
 
             if isEditing {
                 TextField("", text: $editingName)
                     .textFieldStyle(.plain)
                     .multilineTextAlignment(.center)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: 10, weight: .medium, design: .default))
                     .focused($isFocused)
                     .onAppear {
                         isFocused = true
@@ -70,23 +86,30 @@ struct TabItemView: View {
                     }
                     .padding(.horizontal, 4)
             } else {
-                Text(tab.name)
-                    .font(.system(size: 11, weight: .medium))
+                Text(tab.name.uppercased())
+                    .font(.system(size: 9, weight: .semibold, design: .default))
+                    .tracking(0.5)
                     .lineLimit(1)
                     .truncationMode(.tail)
+                    .foregroundColor(Color.black.opacity(0.75))
                     .padding(.horizontal, 4)
+                    .padding(.bottom, 3)
             }
         }
     }
 
     private var inactiveTabView: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 6)
-                .fill(tab.color.opacity(0.8))
+            RoundedRectangle(cornerRadius: 2)
+                .strokeBorder(tab.color.opacity(0.4), lineWidth: 0.5)
+                .background(
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(tab.color.opacity(0.08))
+                )
 
             Text(tab.abbreviation)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(.white)
+                .font(.system(size: 12, weight: .medium, design: .default))
+                .foregroundColor(tab.color.opacity(0.9))
         }
     }
 
