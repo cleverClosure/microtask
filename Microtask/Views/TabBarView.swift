@@ -59,7 +59,10 @@ struct TabBarView: View {
             .popover(isPresented: $showingTabTypePopover) {
                 VStack(spacing: 0) {
                     Button(action: {
-                        appState.createTab(type: .note)
+                        let newTabId = appState.createTab(type: .note)
+                        let newTabIndex = appState.tabs.count
+                        editingName = "Tab \(newTabIndex)"
+                        editingTabId = newTabId
                         showingTabTypePopover = false
                     }) {
                         HStack {
@@ -76,7 +79,10 @@ struct TabBarView: View {
                     Divider()
 
                     Button(action: {
-                        appState.createTab(type: .task)
+                        let newTabId = appState.createTab(type: .task)
+                        let newTabIndex = appState.tabs.count
+                        editingName = "Tab \(newTabIndex)"
+                        editingTabId = newTabId
                         showingTabTypePopover = false
                     }) {
                         HStack {
