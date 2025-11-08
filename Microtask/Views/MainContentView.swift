@@ -15,7 +15,10 @@ struct MainContentView: View {
             // Tab bar at the top
             TabBarView()
 
-            Divider()
+            // Elegant thin divider
+            Rectangle()
+                .fill(Color.black.opacity(0.12))
+                .frame(height: 0.5)
 
             // Content area for active tab
             if let activeTab = appState.activeTab {
@@ -25,7 +28,9 @@ struct MainContentView: View {
             }
         }
         .frame(width: 340, height: 480)
-        .background(Color(nsColor: .windowBackgroundColor))
+        .background(
+            Color(red: 0.98, green: 0.97, blue: 0.95) // Newspaper cream/off-white
+        )
         .onAppear {
             setupKeyboardShortcuts()
         }
@@ -37,18 +42,21 @@ struct MainContentView: View {
     }
 
     private var emptyStateView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "checklist")
-                .font(.system(size: 48))
-                .foregroundColor(.secondary)
+        VStack(spacing: 20) {
+            Image(systemName: "text.book.closed")
+                .font(.system(size: 56, weight: .thin))
+                .foregroundColor(Color.black.opacity(0.25))
 
-            Text("No tabs")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.secondary)
+            VStack(spacing: 8) {
+                Text("NO TABS")
+                    .font(.system(size: 11, weight: .medium, design: .default))
+                    .tracking(2.0)
+                    .foregroundColor(Color.black.opacity(0.4))
 
-            Text("Click the + button to create your first tab")
-                .font(.system(size: 12))
-                .foregroundColor(.secondary)
+                Text("Click the + button to begin")
+                    .font(.system(size: 13, weight: .regular, design: .serif))
+                    .foregroundColor(Color.black.opacity(0.5))
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

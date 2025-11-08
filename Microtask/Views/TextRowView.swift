@@ -14,6 +14,7 @@ struct TextRowView: View {
     @FocusState private var isFocused: Bool
 
     @State private var editingText: String
+    @State private var isHovering = false
 
     init(row: TextRow, tabId: UUID) {
         self.row = row
@@ -29,15 +30,35 @@ struct TextRowView: View {
                 collapsedView
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
         .background(
-            RoundedRectangle(cornerRadius: 6)
-                .fill(row.isExpanded ? Color(nsColor: .controlBackgroundColor) : Color.clear)
+            RoundedRectangle(cornerRadius: 1)
+                .fill(
+                    row.isExpanded
+                        ? Color.white.opacity(0.6)
+                        : (isHovering ? Color.white.opacity(0.3) : Color.clear)
+                )
+        )
+        .overlay(
+            VStack {
+                Spacer()
+                if !row.isExpanded {
+                    Rectangle()
+                        .fill(Color.black.opacity(isHovering ? 0.1 : 0.06))
+                        .frame(height: 0.5)
+                }
+            }
         )
         .contentShape(Rectangle())
+        .animation(.easeInOut(duration: 0.15), value: isHovering)
+        .onHover { hovering in
+            if !row.isExpanded {
+                isHovering = hovering
+            }
+        }
         .onTapGesture {
-            withAnimation(.easeInOut(duration: 0.2)) {
+            withAnimation(.easeInOut(duration: 0.25)) {
                 appState.toggleRowExpansion(in: tabId, rowId: row.id)
             }
             if !row.isExpanded {
@@ -48,6 +69,7 @@ struct TextRowView: View {
             if isExpanded {
                 editingText = row.content
                 isFocused = true
+                isHovering = false
             } else {
                 saveChanges()
             }
@@ -55,24 +77,45 @@ struct TextRowView: View {
     }
 
     private var collapsedView: some View {
-        Text(row.content.isEmpty ? "Empty task..." : row.content)
-            .font(.system(size: 13))
-            .foregroundColor(row.content.isEmpty ? .secondary : .primary)
-            .lineLimit(1)
-            .truncationMode(.tail)
-            .frame(maxWidth: .infinity, alignment: .leading)
+        HStack(alignment: .top, spacing: 8) {
+            // Elegant bullet point
+            Text("•")
+                .font(.system(size: 14, weight: .light))
+                .foregroundColor(Color.black.opacity(0.3))
+                .frame(width: 12)
+
+            Text(row.content.isEmpty ? "Empty task..." : row.content)
+                .font(.system(size: 13, weight: .regular, design: .serif))
+                .foregroundColor(row.content.isEmpty ? Color.black.opacity(0.35) : Color.black.opacity(0.85))
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
 
     private var expandedView: some View {
-        TextEditor(text: $editingText)
-            .font(.system(size: 13))
-            .focused($isFocused)
-            .frame(minHeight: 60, maxHeight: 200)
-            .scrollContentBackground(.hidden)
-            .background(Color.clear)
-            .onChange(of: editingText) { _, _ in
-                saveChanges()
-            }
+        VStack(alignment: .leading, spacing: 0) {
+            TextEditor(text: $editingText)
+                .font(.system(size: 14, weight: .regular, design: .serif))
+                .foregroundColor(Color.black.opacity(0.85))
+                .focused($isFocused)
+                .frame(minHeight: 80, maxHeight: 220)
+                .scrollContentBackground(.hidden)
+                .background(Color.clear)
+                .lineSpacing(4)
+                .padding(8)
+                .background(
+                    RoundedRectangle(cornerRadius: 1)
+                        .strokeBorder(Color.black.opacity(0.08), lineWidth: 0.5)
+                        .background(
+                            RoundedRectangle(cornerRadius: 1)
+                                .fill(Color.white.opacity(0.4))
+                        )
+                )
+                .onChange(of: editingText) { _, _ in
+                    saveChanges()
+                }
+        }
     }
 
     private func saveChanges() {

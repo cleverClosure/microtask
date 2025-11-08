@@ -15,23 +15,31 @@ struct TabContentView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // List of rows
+            // List of rows - newspaper article layout
             ScrollView {
-                LazyVStack(spacing: 4) {
+                LazyVStack(spacing: 0) {
                     ForEach(tab.rows) { row in
                         TextRowView(row: row, tabId: tab.id)
                     }
                 }
-                .padding(.vertical, 8)
+                .padding(.vertical, 12)
             }
 
-            Divider()
+            // Elegant hairline divider
+            Rectangle()
+                .fill(Color.black.opacity(0.12))
+                .frame(height: 0.5)
 
-            // Input field for new tasks
-            HStack(spacing: 8) {
+            // Input field for new tasks - newspaper style
+            HStack(spacing: 10) {
+                Image(systemName: "plus.circle")
+                    .font(.system(size: 13, weight: .light))
+                    .foregroundColor(Color.black.opacity(0.3))
+
                 TextField("Add new task...", text: $newTaskText)
                     .textFieldStyle(.plain)
-                    .font(.system(size: 13))
+                    .font(.system(size: 13, weight: .regular, design: .serif))
+                    .foregroundColor(Color.black.opacity(0.85))
                     .focused($isInputFocused)
                     .onSubmit {
                         addNewTask()
@@ -39,14 +47,16 @@ struct TabContentView: View {
 
                 if !newTaskText.isEmpty {
                     Button(action: addNewTask) {
-                        Image(systemName: "plus.circle.fill")
-                            .foregroundColor(.accentColor)
+                        Image(systemName: "arrow.right.circle.fill")
+                            .font(.system(size: 16, weight: .regular))
+                            .foregroundColor(Color.black.opacity(0.6))
                     }
                     .buttonStyle(.plain)
                 }
             }
-            .padding(12)
-            .background(Color(nsColor: .controlBackgroundColor))
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(Color(red: 0.98, green: 0.97, blue: 0.95))
         }
     }
 
