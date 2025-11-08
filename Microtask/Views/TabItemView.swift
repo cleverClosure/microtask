@@ -29,10 +29,11 @@ struct TabItemView: View {
                 inactiveTabView
             }
         }
-        .frame(width: 52, height: 32)
+        .frame(width: isActive ? 52 : 40, height: 32)
         .contentShape(Rectangle())
         .scaleEffect(isHovering && !isActive ? 1.02 : 1.0)
         .animation(.easeInOut(duration: 0.08), value: isHovering)
+        .animation(.easeInOut(duration: 0.25), value: isActive)
         .onHover { hovering in
             isHovering = hovering
         }
