@@ -90,11 +90,37 @@ struct TextRowView: View {
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .frame(maxWidth: .infinity, alignment: .leading)
+
+            if isHovering {
+                Button(action: {
+                    appState.deleteRow(in: tabId, rowId: row.id)
+                }) {
+                    Text("×")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(Color.black.opacity(0.4))
+                        .frame(width: 16, height: 16)
+                }
+                .buttonStyle(.plain)
+                .transition(.opacity)
+            }
         }
     }
 
     private var expandedView: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Spacer()
+                Button(action: {
+                    appState.deleteRow(in: tabId, rowId: row.id)
+                }) {
+                    Text("×")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(Color.black.opacity(0.4))
+                        .frame(width: 16, height: 16)
+                }
+                .buttonStyle(.plain)
+            }
+
             TextEditor(text: $editingText)
                 .font(.system(size: 14, weight: .regular, design: .serif))
                 .foregroundColor(Color.black.opacity(0.85))
