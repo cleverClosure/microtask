@@ -29,6 +29,9 @@ struct TabBarView: View {
                     onNameChange: { newName in
                         appState.updateTabName(tab.id, name: newName)
                         editingTabId = nil
+                    },
+                    onDelete: {
+                        appState.deleteTab(tab.id)
                     }
                 )
             }
