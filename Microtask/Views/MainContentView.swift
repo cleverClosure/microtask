@@ -23,6 +23,9 @@ struct MainContentView: View {
             // Content area for active tab
             if let activeTab = appState.activeTab {
                 TabContentView(tab: activeTab)
+                    .id(activeTab.id)
+                    .transition(.opacity)
+                    .animation(.easeInOut(duration: 0.1), value: appState.activeTabId)
             } else {
                 emptyStateView
             }
