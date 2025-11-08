@@ -69,28 +69,37 @@ struct TabItemView: View {
                 .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
 
             if isEditing {
-                TextField(tab.name, text: $editingName, prompt: Text(tab.name).foregroundColor(.gray.opacity(0.5)))
-                    .textFieldStyle(.plain)
-                    .multilineTextAlignment(.center)
-                    .font(.system(size: 10, weight: .medium, design: .default))
-                    .foregroundColor(Color.black.opacity(0.85))
-                    .focused($isFocused)
-                    .task(id: isEditing) {
-                        if isEditing {
-                            try? await Task.sleep(nanoseconds: 50_000_000) // 50ms delay
-                            isFocused = true
+                ZStack {
+                    // Placeholder text
+                    if editingName.isEmpty {
+                        Text(tab.name)
+                            .font(.system(size: 10, weight: .medium, design: .default))
+                            .foregroundColor(Color.gray.opacity(0.5))
+                    }
+
+                    TextField("", text: $editingName)
+                        .textFieldStyle(.plain)
+                        .multilineTextAlignment(.center)
+                        .font(.system(size: 10, weight: .medium, design: .default))
+                        .foregroundColor(Color.black)
+                        .focused($isFocused)
+                        .task(id: isEditing) {
+                            if isEditing {
+                                try? await Task.sleep(nanoseconds: 50_000_000) // 50ms delay
+                                isFocused = true
+                            }
                         }
-                    }
-                    .onSubmit {
-                        finishEditing()
-                    }
-                    .onChange(of: editingName) { _, newValue in
-                        // Limit to 5 characters
-                        if newValue.count > 5 {
-                            editingName = String(newValue.prefix(5))
+                        .onSubmit {
+                            finishEditing()
                         }
-                    }
-                    .padding(.horizontal, 4)
+                        .onChange(of: editingName) { _, newValue in
+                            // Limit to 5 characters
+                            if newValue.count > 5 {
+                                editingName = String(newValue.prefix(5))
+                            }
+                        }
+                }
+                .padding(.horizontal, 4)
             } else {
                 HStack(spacing: 2) {
                     // Subtle type indicator icon
