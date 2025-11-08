@@ -69,13 +69,17 @@ struct TabItemView: View {
                 .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
 
             if isEditing {
-                TextField("", text: $editingName)
+                TextField(tab.name, text: $editingName, prompt: Text(tab.name).foregroundColor(.gray.opacity(0.5)))
                     .textFieldStyle(.plain)
                     .multilineTextAlignment(.center)
                     .font(.system(size: 10, weight: .medium, design: .default))
+                    .foregroundColor(Color.black.opacity(0.85))
                     .focused($isFocused)
-                    .onAppear {
-                        isFocused = true
+                    .task(id: isEditing) {
+                        if isEditing {
+                            try? await Task.sleep(nanoseconds: 50_000_000) // 50ms delay
+                            isFocused = true
+                        }
                     }
                     .onSubmit {
                         finishEditing()

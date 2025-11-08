@@ -60,9 +60,10 @@ struct TabBarView: View {
                 VStack(spacing: 0) {
                     Button(action: {
                         let newTabId = appState.createTab(type: .note)
-                        let newTabIndex = appState.tabs.count
-                        editingName = "Tab \(newTabIndex)"
-                        editingTabId = newTabId
+                        if let newTab = appState.tabs.first(where: { $0.id == newTabId }) {
+                            editingName = newTab.name
+                            editingTabId = newTabId
+                        }
                         showingTabTypePopover = false
                     }) {
                         HStack {
@@ -80,9 +81,10 @@ struct TabBarView: View {
 
                     Button(action: {
                         let newTabId = appState.createTab(type: .task)
-                        let newTabIndex = appState.tabs.count
-                        editingName = "Tab \(newTabIndex)"
-                        editingTabId = newTabId
+                        if let newTab = appState.tabs.first(where: { $0.id == newTabId }) {
+                            editingName = newTab.name
+                            editingTabId = newTabId
+                        }
                         showingTabTypePopover = false
                     }) {
                         HStack {
