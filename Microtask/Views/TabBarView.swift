@@ -25,7 +25,6 @@ struct TabBarView: View {
                     editingName: $editingName,
                     onSelect: {
                         appState.activeTabId = tab.id
-                        appState.collapseAllRows(in: tab.id)
                     },
                     onNameChange: { newName in
                         appState.updateTabName(tab.id, name: newName)
