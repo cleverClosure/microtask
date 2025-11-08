@@ -8,16 +8,32 @@
 import Foundation
 import SwiftUI
 
+enum TabType: String, Codable, Equatable {
+    case note
+    case task
+
+    var icon: String {
+        switch self {
+        case .note:
+            return "doc.text"
+        case .task:
+            return "checklist"
+        }
+    }
+}
+
 struct Tab: Identifiable, Codable, Equatable {
     let id: UUID
     var name: String
     var colorIndex: Int
+    var type: TabType
     var rows: [TextRow]
 
-    init(id: UUID = UUID(), name: String, colorIndex: Int, rows: [TextRow] = []) {
+    init(id: UUID = UUID(), name: String, colorIndex: Int, type: TabType = .note, rows: [TextRow] = []) {
         self.id = id
         self.name = name
         self.colorIndex = colorIndex
+        self.type = type
         self.rows = rows
     }
 

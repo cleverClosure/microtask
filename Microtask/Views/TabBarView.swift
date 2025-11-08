@@ -36,10 +36,20 @@ struct TabBarView: View {
                 )
             }
 
-            // Plus button to add new tabs - newspaper style
-            Button(action: {
-                appState.createTab()
-            }) {
+            // Plus button to add new tabs - newspaper style with menu
+            Menu {
+                Button {
+                    appState.createTab(type: .note)
+                } label: {
+                    Label("Note Tab", systemImage: "doc.text")
+                }
+
+                Button {
+                    appState.createTab(type: .task)
+                } label: {
+                    Label("Task Tab", systemImage: "checklist")
+                }
+            } label: {
                 ZStack {
                     RoundedRectangle(cornerRadius: 2)
                         .strokeBorder(Color.black.opacity(0.15), lineWidth: 0.5)
@@ -54,7 +64,7 @@ struct TabBarView: View {
                 }
                 .frame(width: 32, height: 32)
             }
-            .buttonStyle(.plain)
+            .menuStyle(.borderlessButton)
             .help("Add new tab")
         }
         .padding(.horizontal, 16)
