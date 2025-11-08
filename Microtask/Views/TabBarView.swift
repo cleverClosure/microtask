@@ -52,15 +52,15 @@ struct TabBarView: View {
             } label: {
                 ZStack {
                     RoundedRectangle(cornerRadius: 2)
-                        .strokeBorder(Color.black.opacity(0.15), lineWidth: 0.5)
+                        .strokeBorder(Color.black.opacity(0.4), lineWidth: 0.5)
                         .background(
                             RoundedRectangle(cornerRadius: 2)
-                                .fill(Color.white.opacity(0.5))
+                                .fill(Color.white.opacity(0.9))
                         )
 
                     Image(systemName: "plus")
-                        .font(.system(size: 11, weight: .light))
-                        .foregroundColor(Color.black.opacity(0.6))
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(Color.black.opacity(0.85))
                 }
                 .frame(width: 32, height: 32)
             }
