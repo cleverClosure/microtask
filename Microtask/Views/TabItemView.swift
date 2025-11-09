@@ -47,6 +47,23 @@ struct TabItemView: View {
                 onSelect()
             }
         }
+        .onChange(of: isActive) { _, newValue in
+            // Save and clear focus when tab becomes inactive while editing
+            if !newValue && isEditing {
+                isFocused = false  // Explicitly clear focus first
+                finishEditing()
+            }
+        }
+        .onChange(of: isEditing) { _, newValue in
+            // Save when editing ends
+            if !newValue && !editingName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                // This handles the case where isEditing is set to false externally
+                let trimmed = editingName.trimmingCharacters(in: .whitespacesAndNewlines)
+                if trimmed != tab.name && !trimmed.isEmpty {
+                    onNameChange(trimmed)
+                }
+            }
+        }
     }
 
     private var activeTabView: some View {
@@ -73,12 +90,26 @@ struct TabItemView: View {
                     .textFieldStyle(.plain)
                     .multilineTextAlignment(.center)
                     .font(.system(size: 10, weight: .medium, design: .default))
+                    .foregroundColor(Color.black.opacity(0.85))
                     .focused($isFocused)
-                    .onAppear {
-                        isFocused = true
+                    .task(id: isEditing) {
+                        // Wait for SwiftUI to complete the view rendering cycle
+                        if isEditing {
+                            // Yield to allow the rendering pass to complete
+                            await Task.yield()
+                            // Additional yield to ensure TextField is fully initialized
+                            await Task.yield()
+                            isFocused = true
+                        }
                     }
                     .onSubmit {
                         finishEditing()
+                    }
+                    .onChange(of: isFocused) { _, newValue in
+                        // Save when focus is lost
+                        if !newValue && isEditing {
+                            finishEditing()
+                        }
                     }
                     .onChange(of: editingName) { _, newValue in
                         // Limit to 5 characters

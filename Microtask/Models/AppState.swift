@@ -11,6 +11,7 @@ import SwiftUI
 class AppState: ObservableObject {
     @Published var tabs: [Tab] = []
     @Published var activeTabId: UUID?
+    @Published var editingTabId: UUID?
 
     private let saveKey = "microtask.appstate"
 

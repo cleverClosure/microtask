@@ -9,7 +9,6 @@ import SwiftUI
 
 struct TabBarView: View {
     @EnvironmentObject var appState: AppState
-    @State private var editingTabId: UUID?
     @State private var editingName: String = ""
     @State private var showingTabTypePopover = false
 
@@ -20,16 +19,17 @@ struct TabBarView: View {
                     tab: tab,
                     isActive: tab.id == appState.activeTabId,
                     isEditing: Binding(
-                        get: { editingTabId == tab.id },
-                        set: { if !$0 { editingTabId = nil } }
+                        get: { appState.editingTabId == tab.id },
+                        set: { if !$0 { appState.editingTabId = nil } }
                     ),
                     editingName: $editingName,
                     onSelect: {
+                        // Just switch tabs - TabItemView's onChange(of: isActive) will handle saving
                         appState.activeTabId = tab.id
                     },
                     onNameChange: { newName in
                         appState.updateTabName(tab.id, name: newName)
-                        editingTabId = nil
+                        appState.editingTabId = nil
                     },
                     onDelete: {
                         appState.deleteTab(tab.id)
@@ -62,7 +62,7 @@ struct TabBarView: View {
                         let newTabId = appState.createTab(type: .note)
                         let newTabIndex = appState.tabs.count
                         editingName = "Tab \(newTabIndex)"
-                        editingTabId = newTabId
+                        appState.editingTabId = newTabId
                         showingTabTypePopover = false
                     }) {
                         HStack {
@@ -82,7 +82,7 @@ struct TabBarView: View {
                         let newTabId = appState.createTab(type: .task)
                         let newTabIndex = appState.tabs.count
                         editingName = "Tab \(newTabIndex)"
-                        editingTabId = newTabId
+                        appState.editingTabId = newTabId
                         showingTabTypePopover = false
                     }) {
                         HStack {

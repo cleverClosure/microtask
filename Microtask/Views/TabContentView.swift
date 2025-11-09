@@ -24,6 +24,10 @@ struct TabContentView: View {
                 }
                 .padding(.vertical, 12)
             }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                appState.editingTabId = nil
+            }
 
             // Elegant hairline divider
             Rectangle()
