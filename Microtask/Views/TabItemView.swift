@@ -38,9 +38,10 @@ struct TabItemView: View {
             isHovering = hovering
         }
         .onTapGesture(count: 2) {
-            if isActive {
-                startEditing()
+            if !isActive {
+                onSelect()  // Activate the tab first
             }
+            startEditing()
         }
         .onTapGesture(count: 1) {
             if !isEditing {
