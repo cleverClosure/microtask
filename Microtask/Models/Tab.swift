@@ -11,15 +11,6 @@ import SwiftUI
 enum TabType: String, Codable, Equatable {
     case note
     case task
-
-    var icon: String {
-        switch self {
-        case .note:
-            return "doc.text"
-        case .task:
-            return "checklist"
-        }
-    }
 }
 
 struct Tab: Identifiable, Codable, Equatable {

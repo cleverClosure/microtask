@@ -119,22 +119,14 @@ struct TabItemView: View {
                     }
                     .padding(.horizontal, 4)
             } else {
-                HStack(spacing: 2) {
-                    // Subtle type indicator icon
-                    Image(systemName: tab.type.icon)
-                        .font(.system(size: 7, weight: .medium))
-                        .foregroundColor(Color.black.opacity(0.4))
-                        .padding(.bottom, 3)
-
-                    Text(tab.name.uppercased())
-                        .font(.system(size: 9, weight: .semibold, design: .default))
-                        .tracking(0.5)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                        .foregroundColor(Color.black.opacity(0.75))
-                        .padding(.bottom, 3)
-                }
-                .padding(.horizontal, 4)
+                Text(tab.name.uppercased())
+                    .font(.system(size: 9, weight: .semibold, design: .default))
+                    .tracking(0.5)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .foregroundColor(Color.black.opacity(0.75))
+                    .padding(.bottom, 3)
+                    .padding(.horizontal, 4)
             }
         }
     }
@@ -148,16 +140,13 @@ struct TabItemView: View {
                         .fill(tab.color.opacity(0.08))
                 )
 
-            VStack(spacing: 1) {
-                Text(tab.abbreviation)
-                    .font(.system(size: 12, weight: .medium, design: .default))
-                    .foregroundColor(tab.color.opacity(0.9))
-
-                // Subtle type indicator
-                Image(systemName: tab.type.icon)
-                    .font(.system(size: 5, weight: .regular))
-                    .foregroundColor(tab.color.opacity(0.5))
-            }
+            Text(tab.name.uppercased())
+                .font(.system(size: 9, weight: .semibold, design: .default))
+                .tracking(0.5)
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .foregroundColor(tab.color.opacity(0.9))
+                .padding(.horizontal, 4)
         }
     }
 
