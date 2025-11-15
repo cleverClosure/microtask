@@ -13,17 +13,18 @@ struct MicrotaskTests {
 
     @Test("Tab creation assigns correct properties")
     func testTabCreation() {
-        let tab = Tab(name: "Work", colorIndex: 0)
+        let tab = Tab(name: "Work", colorIndex: 0, type: .note)
 
         #expect(tab.name == "Work")
         #expect(tab.colorIndex == 0)
+        #expect(tab.type == .note)
         #expect(tab.rows.isEmpty)
     }
 
     @Test("Tab abbreviation is first letter uppercased")
     func testTabAbbreviation() {
-        let tab1 = Tab(name: "work", colorIndex: 0)
-        let tab2 = Tab(name: "Home", colorIndex: 1)
+        let tab1 = Tab(name: "work", colorIndex: 0, type: .note)
+        let tab2 = Tab(name: "Home", colorIndex: 1, type: .task)
 
         #expect(tab1.abbreviation == "W")
         #expect(tab2.abbreviation == "H")
@@ -37,12 +38,16 @@ struct MicrotaskTests {
         #expect(row.isExpanded == false)
     }
 
-    @Test("AppState creates default tab on initialization")
+    @Test("AppState creates default tabs on initialization")
     func testAppStateDefaultTab() {
         let appState = AppState()
 
-        #expect(appState.tabs.count >= 1)
-        #expect(appState.activeTabId != nil)
+        #expect(appState.tabs.count == 2)
+        #expect(appState.tabs[0].name == "Notes")
+        #expect(appState.tabs[0].type == .note)
+        #expect(appState.tabs[1].name == "Tasks")
+        #expect(appState.tabs[1].type == .task)
+        #expect(appState.activeTabId == appState.tabs[0].id)
     }
 
     @Test("Creating new tab increments tab count")
@@ -50,7 +55,7 @@ struct MicrotaskTests {
         let appState = AppState()
         let initialCount = appState.tabs.count
 
-        appState.createTab()
+        appState.createTab(type: .note)
 
         #expect(appState.tabs.count == initialCount + 1)
     }
@@ -59,7 +64,7 @@ struct MicrotaskTests {
     func testCreateTabMakesActive() {
         let appState = AppState()
 
-        appState.createTab(name: "NewTab")
+        appState.createTab(name: "NewTab", type: .note)
 
         let newTab = appState.tabs.last
         #expect(appState.activeTabId == newTab?.id)
@@ -68,7 +73,7 @@ struct MicrotaskTests {
     @Test("Update tab name changes name correctly")
     func testUpdateTabName() {
         let appState = AppState()
-        appState.createTab(name: "Old")
+        appState.createTab(name: "Old", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
             Issue.record("Tab not created")
@@ -84,7 +89,7 @@ struct MicrotaskTests {
     @Test("Update tab name enforces 5 character limit")
     func testTabNameCharacterLimit() {
         let appState = AppState()
-        appState.createTab(name: "Test")
+        appState.createTab(name: "Test", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
             Issue.record("Tab not created")
@@ -101,7 +106,7 @@ struct MicrotaskTests {
     @Test("Adding row to tab increases row count")
     func testAddRow() {
         let appState = AppState()
-        appState.createTab(name: "Test")
+        appState.createTab(name: "Test", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
             Issue.record("Tab not created")
@@ -118,7 +123,7 @@ struct MicrotaskTests {
     @Test("Update row content changes row correctly")
     func testUpdateRow() {
         let appState = AppState()
-        appState.createTab(name: "Test")
+        appState.createTab(name: "Test", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
             Issue.record("Tab not created")
@@ -142,7 +147,7 @@ struct MicrotaskTests {
     @Test("Toggle row expansion changes expansion state")
     func testToggleRowExpansion() {
         let appState = AppState()
-        appState.createTab(name: "Test")
+        appState.createTab(name: "Test", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
             Issue.record("Tab not created")
@@ -171,7 +176,7 @@ struct MicrotaskTests {
     @Test("Only one row can be expanded at a time")
     func testSingleRowExpansion() {
         let appState = AppState()
-        appState.createTab(name: "Test")
+        appState.createTab(name: "Test", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
             Issue.record("Tab not created")
@@ -207,7 +212,7 @@ struct MicrotaskTests {
     @Test("Delete row removes row from tab")
     func testDeleteRow() {
         let appState = AppState()
-        appState.createTab(name: "Test")
+        appState.createTab(name: "Test", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
             Issue.record("Tab not created")
@@ -230,7 +235,7 @@ struct MicrotaskTests {
     @Test("Delete tab removes tab from list")
     func testDeleteTab() {
         let appState = AppState()
-        appState.createTab(name: "ToDelete")
+        appState.createTab(name: "ToDelete", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
             Issue.record("Tab not created")
@@ -248,7 +253,7 @@ struct MicrotaskTests {
     @Test("Collapse all rows collapses all rows in tab")
     func testCollapseAllRows() {
         let appState = AppState()
-        appState.createTab(name: "Test")
+        appState.createTab(name: "Test", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
             Issue.record("Tab not created")
