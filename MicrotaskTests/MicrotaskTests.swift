@@ -26,6 +26,59 @@ struct MicrotaskTests {
         UserDefaults.standard.removeObject(forKey: "\(Self.testStorageKey).activeTab")
     }
 
+    // Helper to clean up leaked test data from production storage
+    // Run this test ONCE to remove test tabs that polluted your real data
+    @Test("CLEANUP: Remove leaked test tabs from production data")
+    func cleanupLeakedTestData() {
+        let productionKey = "microtask.appstate"
+
+        // Load production data
+        guard let data = UserDefaults.standard.data(forKey: productionKey) else {
+            print("No production data found")
+            return
+        }
+
+        let decoder = JSONDecoder()
+        do {
+            var tabs = try decoder.decode([Tab].self, from: data)
+            let originalCount = tabs.count
+
+            // Common test tab names to remove
+            let testTabNames = ["Test", "Old", "New", "NewTab", "ToDelete", "VeryL"]
+
+            // Filter out test tabs - keep only tabs that:
+            // 1. Are named "Notes" or "Tasks" (the production tabs)
+            // 2. Don't match common test names
+            tabs = tabs.filter { tab in
+                let isProductionTab = tab.name == "Notes" || tab.name == "Tasks"
+                let isTestTab = testTabNames.contains(tab.name) || tab.name.hasPrefix("Tab ")
+                return isProductionTab || !isTestTab
+            }
+
+            let removedCount = originalCount - tabs.count
+            print("Removed \(removedCount) test tabs (from \(originalCount) to \(tabs.count))")
+
+            if removedCount > 0 {
+                // Save cleaned data
+                let encoder = JSONEncoder()
+                let cleanedData = try encoder.encode(tabs)
+                UserDefaults.standard.set(cleanedData, forKey: productionKey)
+
+                // Reset active tab to first tab if needed
+                if let firstTab = tabs.first {
+                    UserDefaults.standard.set(firstTab.id.uuidString, forKey: "\(productionKey).activeTab")
+                }
+
+                print("✅ Production data cleaned! Removed test tabs:")
+                print("   Kept tabs: \(tabs.map { $0.name }.joined(separator: ", "))")
+            } else {
+                print("✅ No test tabs found in production data")
+            }
+        } catch {
+            print("Failed to clean production data: \(error)")
+        }
+    }
+
     @Test("Tab creation assigns correct properties")
     func testTabCreation() {
         let tab = Tab(name: "Work", colorIndex: 0, type: .note)
