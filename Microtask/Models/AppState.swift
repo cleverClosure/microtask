@@ -18,9 +18,12 @@ class AppState: ObservableObject {
     init() {
         loadData()
 
-        // Create default tab if no tabs exist
+        // Create predefined tabs if no tabs exist
         if tabs.isEmpty {
-            createTab(name: "Tab 1")
+            createTab(name: "Notes", type: .note)
+            createTab(name: "Tasks", type: .task)
+            // Set the first tab (Notes) as active
+            activeTabId = tabs.first?.id
         }
     }
 

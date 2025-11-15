@@ -14,7 +14,6 @@ struct TabItemView: View {
     @Binding var editingName: String
     let onSelect: () -> Void
     let onNameChange: (String) -> Void
-    let onDelete: () -> Void
 
     @FocusState private var isFocused: Bool
     @State private var isHovering = false
@@ -134,20 +133,6 @@ struct TabItemView: View {
                         .truncationMode(.tail)
                         .foregroundColor(Color.black.opacity(0.75))
                         .padding(.bottom, 3)
-
-                    if isHovering {
-                        Button(action: {
-                            onDelete()
-                        }) {
-                            Text("×")
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(Color.black.opacity(0.5))
-                                .frame(width: 12, height: 12)
-                        }
-                        .buttonStyle(.plain)
-                        .padding(.bottom, 3)
-                        .transition(.opacity)
-                    }
                 }
                 .padding(.horizontal, 4)
             }
