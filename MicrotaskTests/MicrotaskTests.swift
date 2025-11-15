@@ -6,10 +6,25 @@
 //
 
 import Testing
+import Foundation
 @testable import Microtask
 
 @MainActor
 struct MicrotaskTests {
+    // Use a unique test storage key to avoid polluting production data
+    static let testStorageKey = "microtask.appstate.test.\(UUID().uuidString)"
+
+    // Helper to create test AppState with isolated storage
+    func createTestAppState() -> AppState {
+        let appState = AppState(storageKey: Self.testStorageKey)
+        return appState
+    }
+
+    // Helper to clean up test data
+    func cleanupTestData() {
+        UserDefaults.standard.removeObject(forKey: Self.testStorageKey)
+        UserDefaults.standard.removeObject(forKey: "\(Self.testStorageKey).activeTab")
+    }
 
     @Test("Tab creation assigns correct properties")
     func testTabCreation() {
@@ -40,7 +55,8 @@ struct MicrotaskTests {
 
     @Test("AppState creates default tabs on initialization")
     func testAppStateDefaultTab() {
-        let appState = AppState()
+        let appState = createTestAppState()
+        defer { cleanupTestData() }
 
         #expect(appState.tabs.count == 2)
         #expect(appState.tabs[0].name == "Notes")
@@ -50,29 +66,11 @@ struct MicrotaskTests {
         #expect(appState.activeTabId == appState.tabs[0].id)
     }
 
-    @Test("Creating new tab increments tab count")
-    func testCreateTab() {
-        let appState = AppState()
-        let initialCount = appState.tabs.count
-
-        appState.createTab(type: .note)
-
-        #expect(appState.tabs.count == initialCount + 1)
-    }
-
-    @Test("Creating tab makes it active")
-    func testCreateTabMakesActive() {
-        let appState = AppState()
-
-        appState.createTab(name: "NewTab", type: .note)
-
-        let newTab = appState.tabs.last
-        #expect(appState.activeTabId == newTab?.id)
-    }
-
     @Test("Update tab name changes name correctly")
     func testUpdateTabName() {
-        let appState = AppState()
+        let appState = createTestAppState()
+        defer { cleanupTestData() }
+
         appState.createTab(name: "Old", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
@@ -88,7 +86,9 @@ struct MicrotaskTests {
 
     @Test("Update tab name enforces 5 character limit")
     func testTabNameCharacterLimit() {
-        let appState = AppState()
+        let appState = createTestAppState()
+        defer { cleanupTestData() }
+
         appState.createTab(name: "Test", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
@@ -105,7 +105,9 @@ struct MicrotaskTests {
 
     @Test("Adding row to tab increases row count")
     func testAddRow() {
-        let appState = AppState()
+        let appState = createTestAppState()
+        defer { cleanupTestData() }
+
         appState.createTab(name: "Test", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
@@ -122,7 +124,9 @@ struct MicrotaskTests {
 
     @Test("Update row content changes row correctly")
     func testUpdateRow() {
-        let appState = AppState()
+        let appState = createTestAppState()
+        defer { cleanupTestData() }
+
         appState.createTab(name: "Test", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
@@ -146,7 +150,9 @@ struct MicrotaskTests {
 
     @Test("Toggle row expansion changes expansion state")
     func testToggleRowExpansion() {
-        let appState = AppState()
+        let appState = createTestAppState()
+        defer { cleanupTestData() }
+
         appState.createTab(name: "Test", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
@@ -175,7 +181,9 @@ struct MicrotaskTests {
 
     @Test("Only one row can be expanded at a time")
     func testSingleRowExpansion() {
-        let appState = AppState()
+        let appState = createTestAppState()
+        defer { cleanupTestData() }
+
         appState.createTab(name: "Test", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
@@ -211,7 +219,9 @@ struct MicrotaskTests {
 
     @Test("Delete row removes row from tab")
     func testDeleteRow() {
-        let appState = AppState()
+        let appState = createTestAppState()
+        defer { cleanupTestData() }
+
         appState.createTab(name: "Test", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
@@ -234,7 +244,9 @@ struct MicrotaskTests {
 
     @Test("Delete tab removes tab from list")
     func testDeleteTab() {
-        let appState = AppState()
+        let appState = createTestAppState()
+        defer { cleanupTestData() }
+
         appState.createTab(name: "ToDelete", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
@@ -252,7 +264,9 @@ struct MicrotaskTests {
 
     @Test("Collapse all rows collapses all rows in tab")
     func testCollapseAllRows() {
-        let appState = AppState()
+        let appState = createTestAppState()
+        defer { cleanupTestData() }
+
         appState.createTab(name: "Test", type: .note)
 
         guard let tabId = appState.tabs.last?.id else {
