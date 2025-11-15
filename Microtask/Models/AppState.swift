@@ -13,9 +13,10 @@ class AppState: ObservableObject {
     @Published var activeTabId: UUID?
     @Published var editingTabId: UUID?
 
-    private let saveKey = "microtask.appstate"
+    private let saveKey: String
 
-    init() {
+    init(storageKey: String = "microtask.appstate") {
+        self.saveKey = storageKey
         loadData()
 
         // Create predefined tabs if no tabs exist
