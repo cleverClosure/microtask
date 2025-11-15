@@ -26,31 +26,6 @@ struct MicrotaskTests {
         UserDefaults.standard.removeObject(forKey: "\(Self.testStorageKey).activeTab")
     }
 
-    // MARK: - Cleanup Utilities
-
-    /// Removes all leaked test data from UserDefaults
-    /// This cleans up old test tabs that were created before proper isolation was implemented
-    static func cleanupAllLeakedTestData() {
-        let defaults = UserDefaults.standard
-        let allKeys = defaults.dictionaryRepresentation().keys
-
-        // Find all keys that match our test storage pattern
-        let testKeys = allKeys.filter { key in
-            key.hasPrefix("microtask.appstate.test.")
-        }
-
-        print("Found \(testKeys.count) leaked test data entries")
-
-        // Remove each test key
-        for key in testKeys {
-            defaults.removeObject(forKey: key)
-            print("Removed: \(key)")
-        }
-
-        defaults.synchronize()
-        print("Cleanup complete!")
-    }
-
     @Test("Tab creation assigns correct properties")
     func testTabCreation() {
         let tab = Tab(name: "Work", colorIndex: 0, type: .note)
@@ -317,14 +292,6 @@ struct MicrotaskTests {
         let updatedTab = appState.tabs.first(where: { $0.id == tabId })
         let allCollapsed = updatedTab?.rows.allSatisfy { !$0.isExpanded } ?? false
         #expect(allCollapsed == true)
-    }
-
-    // MARK: - Cleanup Test
-    // This test can be run manually to clean up leaked test data
-    // Disable by default to prevent accidental cleanup during normal test runs
-    @Test(.disabled("Run manually to cleanup leaked test data"))
-    func cleanupLeakedTestTabs() {
-        MicrotaskTests.cleanupAllLeakedTestData()
     }
 }
 
